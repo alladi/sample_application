@@ -14,12 +14,15 @@ group :development, :test do
   gem 'spork-rails', '4.0.0'
   gem 'guard-spork', '1.5.1'
   gem 'childprocess', '0.5.1'
+  gem 'rspec-its',  '1.0.0'
 end
 
 group :test do
   gem 'selenium-webdriver', '2.35.1'
   gem 'capybara', '2.2.1'
   gem 'factory_girl_rails', '4.4.1'
+  gem 'cucumber-rails', '1.4.0', :require => false
+  gem 'database_cleaner', github: 'bmabey/database_cleaner'
 end
 
 gem 'sass-rails', '4.0.1'
