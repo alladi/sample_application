@@ -8,6 +8,7 @@ class UsersController < ApplicationController
   end
 
   def new
+    new_and_create_action_restriction
   	@user = User.new
   end
   
@@ -16,14 +17,16 @@ class UsersController < ApplicationController
   end
   
   def create
+    new_and_create_action_restriction
   	@user = User.new(user_params)
-	if @user.save
-    sign_in @user
-		flash[:success] = "Welcome to the Sample Application!"
-		redirect_to @user
-	else
-		render 'new'
-	end  	
+	 
+   if @user.save
+     sign_in @user
+		  flash[:success] = "Welcome to the Sample Application!"
+		  redirect_to @user
+    else
+		  render 'new'
+	   end  	
   end
 
   def edit
@@ -39,6 +42,7 @@ class UsersController < ApplicationController
   end
 
   def destroy
+    # Exer 9.6:9 TODO: Modify the destroy action to prevent admin users from destroying themselves.
     User.find(params[:id]).destroy
     flash[:success] = "User deleted."
     redirect_to users_url    
@@ -46,8 +50,9 @@ class UsersController < ApplicationController
 
 
 	private
+      # Add the admin attribute to the permitted parameters first { Exercise 9.6:1 #ToDo to check the corresponding test fail}
   		def user_params
-			params.require(:user).permit(:name, :email, :password, :password_confirmation)  	
+			params.require(:user).permit(:name, :email, :password, :password_confirmation, :admin)  	
   		end
 
       # Before filters
@@ -67,4 +72,10 @@ class UsersController < ApplicationController
       def admin_user
         redirect_to(root_url) unless current_user.admin?
       end
+
+      # new_and_create_action_restriction to restrict access to new and create actions if the user is already signed in.
+      def new_and_create_action_restriction
+        redirect_to(root_url) unless !current_user
+      end
+
 end

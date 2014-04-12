@@ -50,18 +50,36 @@ describe "Authentication" do
 
 			let(:user) { FactoryGirl.create(:user) }
 
+			#Code to check that the Profile and Settings links doesnt appear when user isnt in signed-in {Exer: 9.6:3}
+			it { should_not have_link('Profile',		href: user_path(user)) }
+			it { should_not have_link('Settings',		href: edit_user_path(user)) }
 
 			describe "when attempting to visit a protected page" do
 				before do
 					visit edit_user_path(user)
-					fill_in "Email", with: user.email
-					fill_in "Password", with: user.password
-					click_button "Sign in"
+					sign_in(user) # Refactoring the code { Exer: 9.6:4 using the sign_in(user) as much as possible}
+					# fill_in "Email", with: user.email
+					# fill_in "Password", with: user.password
+					# click_button "Sign in"
 				end
 
 				describe "after signing in" do
 					it "should render the desired protected page" do
 						expect(page).to have_title('Edit user')
+					end
+
+					describe "when signing in again" do
+						before do
+							click_link "Sign out"
+							visit signin_path
+							fill_in "Email", with: user.email
+							fill_in "Password", with: user.password
+							click_button "Sign in"
+						end
+
+						it "should render the default (profile) page" do
+							expect(page).to have_title(user.name)
+						end
 					end
 				end
 			end
@@ -114,5 +132,19 @@ describe "Authentication" do
 			end
 		end
 
+		describe "as admin user" do
+			# Exer 9.6:9 TODO: Test to modify the destroy action to prevent admin users from destroying themselves.
+			let(:user) { FactoryGirl.create(:user) }
+			let(:admin) { FactoryGirl.create(:admin) }
+
+			before do  
+				sign_in admin
+				visit users_path
+			end
+
+			describe "submitting a DELETE request to Users#destroy action to delete a non-admin user" do
+				
+			end
+		end	
 	end
 end
