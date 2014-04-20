@@ -42,6 +42,12 @@ describe "Static pages" do
 					expect(page).to have_selector("li##{item.id}", text: item.content)
 				end
 			end
+
+			it "should show the sidebar info with user name and micropost count" do
+					expect(page).to  have_selector('section h1', text: user.name)
+					#expect(page).to have_selector('section span', text: pluralize(Micropost.count.to_s, "micropost"))
+					expect(page).to have_content("micropost".pluralize(user.feed.count)) #{http://stackoverflow.com/questions/14236438/rails-rspec-factorygirl-pluralize-test}
+			end
 		end
 	end
 
